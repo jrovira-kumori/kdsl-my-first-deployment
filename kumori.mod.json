@@ -1,0 +1,6 @@
+{
+    "spec": "kumori/module/v1",
+    "kumori": "0.0.1",
+    "module": "kumori.systems/example",
+    "requires": []
+}

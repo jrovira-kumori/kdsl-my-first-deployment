@@ -1,0 +1,32 @@
+import "kumori" // Import the core Kumori types
+
+// Defines the contract (interface) for the EchoServer component
+component EchoServer {
+
+    // Service definitions (how this component exposes/consumes services)
+    // 'srv' defines the component's communication capabilities.
+    srv {
+        // Specifies a TCP client interface named 'RemotePostgres'
+        client { RemotePostgres "tcp" }
+        
+        // Specifies an HTTP server interface named 'HTTPServer'
+        server { HTTPServer "http" }
+        
+        // Specifies a GRPC duplex interface named 'InternalChannel'
+        duplex { InternalChannel { protocol "grpc", port 1337 } }
+    }
+
+    // Resource interface (what resources this component expects from the platform)
+    // 'resource' defines abstract resource requirements.
+    resource {
+        Port:   kumori.Port     // A generic port resource
+        Volume: kumori.Volume   // A generic volume resource
+    }
+
+    // Configuration interface (what configuration values this component expects)
+    // 'config' defines tunable parameters for the component.
+    config {
+        Port:       number                  // Expected port number
+        Response:   string = "Hello world!" // Default response text, can be overridden
+    }
+}

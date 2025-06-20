@@ -1,0 +1,52 @@
+import "strconv"
+
+// Provides the implementation for the EchoServer component contract
+component EchoServer {
+
+    // Internal variables derived from configuration
+    var (
+        // Concatenates ":" with the formatted Port from the interface's config
+        Port = strconv.Concat([":", strconv.Format(interface.config.Port, 10)])
+    )
+
+    // For this simple example, a hardcoded scale factor
+    scale 1
+
+    // Resource sizing for the component itself
+    size {
+        bandwidth    1G     // Desired network bandwidth
+        minbandwidth 1G     // Minimum acceptable network bandwidth
+        mincpu       self.code.EchoServer.size.mincpu // Link the minimum cpu to the EchoServer container
+    }
+
+    // The executable code block for the component
+    code {
+        EchoServer {
+            // Command to run the http-echo server, listening on var.Port and returning interface.config.Response
+            cmd     ["-listen", var.Port, "-text", interface.config.Response],
+            image   "docker.io/hashicorp/http-echo:latest", // The Docker image for a simple HTTP echo server
+            
+            // Specific resource sizing for this executable
+            size {
+                memory  500M, // 500 Megabytes of memory
+                cpu     400m, // 400 millicores of CPU
+                mincpu  200m, // Minimum 200 millicores of CPU
+            },
+
+            // Environment variables to be set in the container
+            env {
+                MyEnvVar "hello",
+                Another  string(interface.resource.Port), // Example: convert resource Port to string env var
+            },
+
+            // Filesystem mounts for configuration
+            fs {
+                // Mount string "123" to /config.json
+                "/config.json"  "123", 
+
+                // Mount JSON representation of interface.config to /another.json
+                "/another.json" strconv.JSON({ A interface.config })
+            },
+        }
+    }
+}

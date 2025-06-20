@@ -1,0 +1,21 @@
+import "kumori"
+
+// Defines the deployment named "my-first-deployment"
+deployment {
+    name        "my-first-deployment"
+    artifact    EchoServer
+    resilience  1
+
+    // Configuration values passed down to the service and its components.
+    // These override defaults defined in the component/service contracts.
+    config {
+        Port        8080                      // Set the HTTP port for the EchoServer component
+        Response    "Hello Kumori from KDSL!" // Custom response text for the EchoServer
+    }
+
+    // Resource values to be allocated by the Kumori platform for this deployment.
+    resource {
+        Port    kumori.Port("http-endpoint") // Request a named port resource from the platform
+        Volume  kumori.Ephemeral(33G)        // Request an ephemeral volume of 33 Gigabytes
+    }
+}
